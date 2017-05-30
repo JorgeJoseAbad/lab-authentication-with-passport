@@ -1,3 +1,4 @@
+/* jshint esversion:6 */
 const express        = require("express");
 const router         = express.Router();
 // User model
@@ -14,14 +15,6 @@ router.get("/login", (req, res, next) => {
   res.render("passport/login", {message: req.flash("error")});
 });
 
-router.get("/signup", (req, res) => {
-  res.render("passport/signup");
-});
-
-router.get("/private-page", ensureLogin.ensureLoggedIn(), (req, res) => {
-  res.render("passport/private", { user: req.user });
-});
-
 
 router.post("/login", passport.authenticate("local", {
   successRedirect: "/private-page",
@@ -30,6 +23,9 @@ router.post("/login", passport.authenticate("local", {
   passReqToCallback: true
 }));
 
+router.get("/signup", (req, res) => {
+  res.render("passport/signup");
+});
 
 router.post("/signup", (req, res, next) => {
   var username = req.body.username;
@@ -64,7 +60,15 @@ router.post("/signup", (req, res, next) => {
   });
 });
 
+router.get("/private-page", ensureLogin.ensureLoggedIn(), (req, res) => {
+  res.render("passport/private", { user: req.user });
+});
 
+router.get("/logout", (req, res) => {
+  console.log("in -- logout");
+  req.logout();
+  res.redirect("/login");
+});
 
 
 module.exports = router;
